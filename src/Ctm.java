@@ -19,10 +19,31 @@ public class Ctm{
 	// java rpc.Ctm Filepath @IP Port
 
 	public static void main(String [] arg) throws Exception {
+		if(arg.length < 3){
+			System.out.println("You may use it this way : \n java rpc.Ctm ./path_to_your_file.java IP_adress Port_number");
+			System.exit(0);
+		}
+
+		// TODO : FAIRE DES exceptions pour handle les types
+
+
 		// Créer fichiers 
 		try{
-			createStub(arg[0]);
-			createBoot(arg[0]);
+			String filename = arg[0];
+			String ip_address = arg[1];
+			String port = arg[2];
+
+			String class_name = filename.replaceAll(".java","");
+			//int port = Integer.valueOf(arg[2]);
+
+			createDistribution("Stub",class_name, ip_address, port);
+			createDistribution("Boot",class_name, ip_address, port);
+
+/*
+			createStub(filename, ip_address, port);
+			createBoot(filename, ip_address, port);
+			*/
+
 		}catch(Exception e) {
             e.printStackTrace();
         }
@@ -35,11 +56,32 @@ public class Ctm{
 	 * 
 	 * */
 
+	private static void createDistribution(String distributionType, String InterfaceName, String ip_address, String port) throws Exception{
 
-	private static void createStub(String InterfaceName) throws Exception{
+		if((distributionType.equals("Stub") || distributionType.equals("Boot"))){
+			System.out.println(distributionType);
+			String filename = InterfaceName+distributionType+".java";
+			createFile(filename);
+			String content = readFile(distributionType+"Structure.txt");
+			content = content.replaceAll("\\{\\{INTERFACE\\}\\}", InterfaceName);
+			content = content.replaceAll("\\{\\{PORT\\}\\}", port);
+			content = content.replaceAll("\\{\\{@IP\\}", ip_address);
+			FileWriter(filename, content);
+		}
+		
+	}
+
+
+/*
+	private static void createStub(String InterfaceName, String ip_adress, int port) throws Exception{
 		String filename = InterfaceName+"Stub.java";
 		createFile(filename);
 		String content = readFile("StubStructure.txt");
+		content.replaceAll("\\^{{INTERFACE}}$", InterfaceName);
+		content.replaceAll("\\^{{PORT}}$", port);
+		content.replaceAll("\\^{{@IP}}$", ip_address);
+
+
 		FileWriter(filename, content);
 	}
 
@@ -50,6 +92,7 @@ public class Ctm{
 		String content = readFile("BootStructure.txt");
 		FileWriter(filename, content);
 	}
+	*/
 
 	/**
 	 * 
