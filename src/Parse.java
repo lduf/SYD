@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 public class Parse {
 	/* Attributs */
 	public String interface_name;
-	public HashMap<String, ArrayList<String>> interface_methods = new HashMap<String, ArrayList<String>>();
+	public HashMap<String, HahsMap<String, String>> interface_methods = new HashMap<String, HashMap<String, String>>();
 
 	/* Methods */
 	public Parse(String file_path) throws ClassNotFoundException {
