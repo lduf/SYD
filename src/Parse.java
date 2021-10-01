@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 public class Parse {
 	/* Attributs */
 	public String interface_name;
-	public HashMap<String, HahsMap<String, String>> interface_methods = new HashMap<String, HashMap<String, String>>();
+	public ArrayList<Function> methods = new ArrayList<Function>();
 
 	/* Methods */
 	public Parse(String file_path) throws ClassNotFoundException {
@@ -22,8 +22,49 @@ public class Parse {
 		Class class_to_analyse = Class.forName("rpc." + interface_name);
 
 		for (Method method : class_to_analyse.getDeclaredMethods()) {
-			System.out.println(method.toString());
+			// faire le traitement pour chaque fonction
+
+			System.out.println("Initial output: " + method.toString());
+
+			int index_arg = 0;
+			String keyword_arg = "arg";
+			ArrayList<Argument> list_args = new ArrayList<Argument>();
+			ArrayList<String> list_exceptions = new ArrayList<String>();
+
+			// traiter les arguments et créer l'arraylist associée
+			// récupérer une liste des paramètres
+			for (Class param : method.getParameterTypes()) {
+				// get the type from a string like : "class java.lang.String"
+				String arg_type = splitDotLastElement(param.toString());
+
+				// generate the argument name
+				String arg_name = keyword_arg + index_arg;
+				index_arg++;
+
+				Argument arg = new Argument(arg_name, arg_type);
+				list_args.add(arg);
+			}
+
+			// get the exceptions
+			for (Class exception : method.getExceptionTypes()) {
+				list_exceptions.add(splitDotLastElement(exception.toString()));
+			}
+
+			// get confidentiality
+			String confidentiality = "public";
+			// get return type
+			String return_type = splitDotLastElement(method.getReturnType().toString());
+			// get name
+			String name = method.getName();
+
+			Function f = new Function(confidentiality, return_type, name, list_args, list_exceptions);
+			methods.add(f);
 		}
+	}
+
+	public static String splitDotLastElement(String string_to_split) {
+		String[] elements = string_to_split.split("\\.");
+		return elements[elements.length-1];
 	}
 
 	public static String getInterfaceFromFilePath(String file_path) {
