@@ -25,15 +25,15 @@ public class Function {
 	}
 
 	public void generateSignature() {
-		this.signature = this.confidentiality + " " + this.return_type + " " + this.name;
+		String preambule = this.confidentiality + " " + this.return_type + " " + this.name;
 
 		// for every argument in the arraylist
 		String string_args = " (";
 		int number_args = this.arguments.size();
 		for (int i=0; i<number_args; i++) {
-			string_args = string_args + this.arguments.get(i).toString();
+			string_args += this.arguments.get(i).toString();
 			if (i != number_args - 1) {
-				string_args = string_args + ", ";
+				string_args += ", ";
 			}
 		}
 		string_args = string_args + ")";
@@ -42,13 +42,13 @@ public class Function {
 		String string_exceptions = " throws ";
 		int number_exceptions = this.exceptions.size();
 		for (int i=0; i<number_exceptions; i++) {
-			string_exceptions = string_exceptions + this.exceptions.get(i);
+			string_exceptions += this.exceptions.get(i);
 			if (i != number_exceptions - 1) {
-				string_exceptions = string_exceptions + ", ";
+				string_exceptions += ", ";
 			}
 		}
 
-		this.signature = this.signature + string_args + string_exceptions;
+		this.signature = preambule + string_args + string_exceptions;
 	}
 
 	public String getConfidentiality() {

@@ -15,8 +15,7 @@ public class Parse {
 	public Parse(String file_path) throws ClassNotFoundException {
 		// get the name of the interface from the file path
 		interface_name = this.getInterfaceFromFilePath(file_path);
-
-		System.out.println(interface_name);
+		System.out.println("Interface name: " + interface_name);
 
 		// analyse the file
 		Class class_to_analyse = Class.forName("rpc." + interface_name);
@@ -34,15 +33,8 @@ public class Parse {
 			// traiter les arguments et créer l'arraylist associée
 			// récupérer une liste des paramètres
 			for (Class param : method.getParameterTypes()) {
-				// get the type from a string like : "class java.lang.String"
-				String arg_type = splitDotLastElement(param.toString());
-
-				// generate the argument name
-				String arg_name = keyword_arg + index_arg;
+				list_args.add(new Argument(keyword_arg+index_arg, splitDotLastElement(param.toString())));
 				index_arg++;
-
-				Argument arg = new Argument(arg_name, arg_type);
-				list_args.add(arg);
 			}
 
 			// get the exceptions
@@ -50,14 +42,8 @@ public class Parse {
 				list_exceptions.add(splitDotLastElement(exception.toString()));
 			}
 
-			// get confidentiality
-			String confidentiality = "public";
-			// get return type
-			String return_type = splitDotLastElement(method.getReturnType().toString());
-			// get name
-			String name = method.getName();
-
-			Function f = new Function(confidentiality, return_type, name, list_args, list_exceptions);
+			// TODO find a way to get the confidentiality programatically
+			Function f = new Function("public", splitDotLastElement(method.getReturnType().toString()), method.getName(), list_args, list_exceptions);
 			methods.add(f);
 		}
 	}
